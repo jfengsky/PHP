@@ -1,0 +1,14 @@
+十渡写的PHP合并css，js方法，时时更新，开发阶段很有用，部署阶段还是推荐ant
+其中要用到2个jar文件，
+1.下载YUI compress 用于压缩css文件。 地址：http://yuilibrary.com/download/yuicompressor/
+2. closure-compiler 用于压缩js文件。地址：http://code.google.com/p/closure-compiler/downloads/list
+注意分别改名为 yuicompressor.jar和compiler.jar放在index.php目录下
+
+测试地址：可在<script src=""></script>和<link href="" />里直接引用
+http://localhost/combine/?p=http://localhost/&s=alipay/alipay.css,bottom/bottom.css&t=css&compress
+--------------------
+参数说明
+p js或css模块地址
+s 文件名列表
+t 类型css或js
+compress 压缩
