@@ -1,0 +1,172 @@
+win7+nginx+php5.3+xdebug+ZendGuardLoader 配置教程
+
+一、配置前准备
+
+php---------php-5.3.13-nts-Win32-VC9-x86
+
+nginx-------nginx-1.2.0
+
+RunHiddenConsole---RunHiddenConsole (隐藏DOS窗口的小程序)
+
+xdebug-----php_xdebug-2.2.0-5.3-vc9-nts
+
+zendloader-----ZendGuardLoader-php-5.3-Windows
+二、配置PHP
+
+我们把php-5.3.13-nts-Win32-VC9-x86.zip解压到D盘根目录下(或其他目录也可)，把文件夹名字改成php5.3，这样方便一此。找到php5.3目录下的“php.ini-development”或者“php.ini-production”文件，我们把它从命名为"php.ini"。
+
+打开php.ini修改以下配置：
+
+error_reporting = E_ALL
+
+error_log = d:/Logs/php_errors.log  将php错误日志记录到d:/Log/目录
+
+;extension=php_gd2.dll(去掉;开启拓展)
+
+;extension=php_mysql.dll
+
+;extension=php_mysqli.dll
+
+;extension=php_mbstring.dll
+
+date.timezone =Asia/Chongqing  设置时区
+
+三、配置NGINX
+
+解压nginx-1.2.0到D盘根目录重命名为nginx,首先需要打开D:/nginx，找到D:/nginx/conf目录下的nginx.conf，以记事本打开，
+
+step1:
+
+设定error.log的存放目录，将#error_log logs/error.log;的#去处，默认error.log是存放在Nginx安装目录中logs目录下。
+
+step2:
+
+设定WEB服务器目录，类似于PHP.INI配置文件中的document_root，Nginx配置文件中的原有信息如下
+
+location / {
+
+root html;
+
+index index.html index.htm;
+
+}
+
+修改Nginx配置如下
+
+location / {
+
+root E:/www;
+
+index index.php index.html index.htm;
+
+}
+
+这里需要注意，路径分隔符请使用”/”而不要使用Windows中的”\”以防歧义。
+
+step3:
+
+在Nginx配置文件中找到
+
+#location ~ \.php$ {
+
+# root html;
+
+# fastcgi_pass 127.0.0.1:9000;
+
+# fastcgi_index index.php;
+
+# fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name;
+
+# include fastcgi_params;
+
+#}
+
+去处#并添加WEB目录，即
+
+location ~ \.php$ {
+
+root D:/PHPWeb;
+
+fastcgi_pass 127.0.0.1:9000;
+
+fastcgi_index index.php;
+
+fastcgi_param SCRIPT_FILENAME E:/www$fastcgi_script_name;
+
+include fastcgi_params;
+
+}
+
+这里需要注意，需要将
+
+fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name;
+
+中的/scripts修改为之前设定的WEB目录，否则会报HTTP 404错误。
+
+修改PHP.INI配置文件中的cgi.fix_pathinfo = 1，PHP 会修正 SCRIPT_FILENAME 为真实的文件地址，否则 PHP 将无法找到需要处理的 PHP 文件。
+
+至此，Nginx支持运行PHP的基础配置工作就好了。
+
+step4:
+
+接下来我们需要启动PHP FastCgi和Nginx服务以便运行PHP程序，方法如下
+
+1、将RunHiddenConsole.exe放到nginx目录(隐藏dos的小程序)
+
+2、建立php fastcgi与nginx两个服务启动批处理文件start_nginx.bat，内容如下：
+
+@echo off
+
+echo Starting PHP FastCGI...
+
+RunHiddenConsole d:/php5.3/php-cgi.exe -b 127.0.0.1:9000 -c d:/php5.3/php.ini
+
+echo Starting nginx...
+
+RunHiddenConsole d:/nginx/nginx.exe
+
+3、建立php fastcgi与nginx两个服务停止批处理文件stop_nginx.bat，内容如下：
+
+@echo off
+echo Stopping nginx...
+taskkill /F /IM nginx.exe > nul
+echo Stopping PHP FastCGI...
+taskkill /F /IM php-cgi.exe > nul
+exit
+
+可以将以上两个批处理文件放到nginx根目录，双击start_nginx.bat脚本启动。你可以通过phpinfo函数查看到此时运行PHP的WEB服务器变成了Nginx。现在其时php+nginx就基本完成了，但是有时候我也须要php_xdebug与zend_loader两个拓展工具。
+
+四、配置zend_loader拓展
+
+      解压ZendGuardLoader-php-5.3-Windows 找到ZendLoader.dll复制php5.3/ext/,在php.ini底部中加入如下配置信息：
+
+[Zend.loader]
+
+zend_loader.enable=1
+
+zend_loader.disable_licensing=1
+
+zend_loader.obfuscation_level_support=3
+
+zend_loader.license_path=
+
+zend_extension="D:/php5.3/ext/ZendLoader.dll"
+
+五、配置php_xdebug拓展
+复制 php_xdebug-2.2.0-5.3-vc9-nts.dll文件到php5.3/ext/目录，在php.ini底部中加入如下配置信息：
+
+[Xdebug]
+
+zend_extension="D:/php5.3/ext/php_xdebug-2.2.0-5.3-vc9-nts.dll"
+
+xdebug.auto_trace=On
+
+xdebug.collect_params=On
+
+xdebug.collect_return=On
+
+xdebug.profiler_enable=on
+
+xdebug.trace_output_dir="D:\Logs\xdebug\trace"
+
+xdebug.profiler_output_dir="D:\Logs\xdebug\profiler" 
