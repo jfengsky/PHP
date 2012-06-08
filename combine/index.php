@@ -28,7 +28,9 @@ foreach($files as $item){
 }
 
 //中文字符转换为unicode码
-$buffer = iconv("gbk","utf-8",$buffer);
+if(chkCode($buffer) == "GBK"){
+  $buffer = iconv("gbk","utf-8",$buffer);
+}
 $buffer = utf8_unicode($buffer);
 
 //创建临时合并文件
@@ -72,6 +74,15 @@ function utf8_unicode($s){
     }
   }
   return $str;
+}
+function chkCode($string){
+	$code = array('ASCII', 'GBK', 'UTF-8');
+	foreach($code as $c){
+	  if( $string === iconv('UTF-8', $c, iconv($c, 'UTF-8', $string))){
+	   return $c;
+	  }
+	}
+	return null;
 }
 
 ?>
