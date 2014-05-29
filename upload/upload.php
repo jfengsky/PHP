@@ -7,5 +7,5 @@ foreach ($_FILES["images"]["error"] as $key => $error) {
     }
 }
 
-
+?>
 echo "<h2>文件成功上传！</h2>";

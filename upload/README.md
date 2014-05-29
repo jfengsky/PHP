@@ -143,3 +143,6 @@ ajax发送FormData数据
 	}
 	  }, false);
 	}());
+
+
+http://www.leeon.me/upload/other/swfupload.html

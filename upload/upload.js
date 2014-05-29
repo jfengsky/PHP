@@ -37,8 +37,12 @@
           reader.readAsDataURL(file);
         }
                 //将文件数据添加到FormData对象内
+
         if (formdata) {
           formdata.append("images[]", file);
+          formdata.append("test","1111");
+          formdata.append("test2","2222");
+          console.log(formdata + '');
         }
       }
     }

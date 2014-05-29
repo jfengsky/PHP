@@ -21,7 +21,10 @@
     <article id="main">
         <h1>上传你的图片</h1>
 		<form method="post" enctype="multipart/form-data"  action="upload.php">
-    		<input type="file" name="images" id="images" multiple />
+			<input type="hidden" value="11111">
+			<input type="hidden" value="22222">
+			<input type="hidden" value="22222">
+    		<input type="file" name="images" id="images" />
     		<button type="submit" id="btn">Upload Files!</button>
     	</form>
 
@@ -32,12 +35,6 @@
     </article>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script src="upload.js"></script>
-    <!-- 代码高亮 START  -->
-    <link href="http://www.36ria.com/prettify/prettify-min.css" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" src="http://www.36ria.com/prettify/prettify-min.js"></script>
-    <script>
-    prettyPrint();
-    </script>
-    <!-- 代码高亮 END  -->
+
 </body>
 </html>
